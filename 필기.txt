@@ -1,0 +1,129 @@
+부모자식관계 : 부모(주)오브젝트가 자식(종)오브젝트를 포함. 즉 주가 움직이면 종도 따라 움직임. 무기나 장비 휘두르는 모션(손을 따라감) 옷 변경
+               (몸의 움직임을 옷이 따라감) 등에 응용함. *** 특히 카메라를 오브젝트의 자식으로 박아버리면 카메라가 알아서 따라감
+
+
+카메라 : Perspective : 3D카메라 / Othdoctive : 2D카메라.  Far : 카메라 촬영 길이 (시야 등에 유용)
+
+컴포넌트 - 물리(Physics) - Ridgedbody : 물리 시뮬레이션(물리법칙. 중력 등 설정) + 충돌인식기능
+           Use Gravity : 중력 적용   / Is Kinematic : 물리 연출을 자동으로 할지 스크립트로 제어할지 설정
+           Mass : 질량  Drag : 마찰  ㅗ
+
+
+Material : Cutout : 부분 파괴 등을 구현 (물체의 일부가 잘려나가거나 하는 연출)
+
+
+특수 변수명 (int float .. 이외)
+
+Animation : 애니메이션 동작에 관여하는 변수  ( Animation ani; )
+AudioClip : 사운드 데이터 형식
+Text : 텍스트 관리 변수
+
+
+
+스크립트 함수 모음
+
+translate. : 오브젝트를 이동 회전 등 변화시킴 (단 좌표값에서 x,y,z는 z뒤에 f를 붙여서 zf로. 이유는 기본 Float(소수형)함수기 때문.Float는 무조건 값 뒤에f를 붙임)
+
+translate.Transform(x,y,z) : x,y,z방향으로 이동
+translate.Rotate(x. y, z, speed) : 해당방향으로 회전(단위는 도). 단 렉 방지를 위해 속도는 time.deltatime을 적용해주는게 좋음. 
+ex> translate.Rotate(0, 20f, 15f, 30*Time.deltaTime)    1초당 30단위
+
+
+OnMouseDown()  : 충돌체가 있는 오브젝트에 커서를 대고 누름
+OnMouseEnter() : 커서가 진입
+onMouseExit() : 커서가 오브젝트를 벗어남
+
+Input.GetKey(KeyCode.X)   : X(특정) 키보드를 눌렀을 경우 (주로 이동이나 스킬 발동 등 키입력 받을때 씀)
+GetComponent<Animation>().CrossFade("애니메이션명");  GetComponent로 Animation 컴포넌트를 갖고 와서 Crossfade(전환시 부드럽게)로 다른 애니메이션을 출력.
+즉 걷거나 뛰거나 치거나 할때 애니메이션을 출력하게 하는 명령어. 크로스페이드는 전환이 자연스럽게 보이도록 하는 명령어.
+GetComponent<AudioSource>().PlayOneShot : 오디오 출력. 1회만
+
+OnTriggerEnter : 트리거 세팅한 오브젝트
+
+void OnTriggerEnter (Collider col) { }    // 오브젝트의 Collider에 충돌한 물체를 식별하여 임의의 이름(여기서는col)을 부여하고, 충돌한 순간 함수 명령어를 실행.
+                                             그리고 충돌한 물체의 정보를 인자에 담아서 넘김
+
+인자 : col.gameObject.name   (gameObject는 "자기 자신"을 말함. 즉 앞 구문은 col(OnTriggerEnter에서 날라온 충돌체의 정보)에서 
+                              자기자신(gameObject)에게 충돌한놈의 이름(name)을 갖고 오는걸 뜻함)
+
+Destroy : 오브젝트를 삭제함   // Destroy (gameObject) : 자기자신을 삭제 
+
+ToString : int값을 String(문자열)값으로 전환해서 저장)
+Ex >       int point = 20;
+	   string text = point.ToString
+
+
+SetActive : 해당 오브젝트를 활성화할지 비활성화할지.
+
+     // winner변수안에 있는 게임오브젝트를 비활성화한다(false)
+ex > winner.gameObject.SetActive(false);  
+
+
+
+
+
+
+if : 조건식이 참일때만 명령 실행
+
+if(조건식) { }
+
+
+if else : 조건식이 참이면 if쪽 명령, 거짓이면 else쪽 구문
+
+if( ) { }  else { }
+
+
+다중 조건문
+
+if (A&&B) : AND조건문. A랑 B가 전부 참
+if (A||B) : OR조건문. 둘중 하나이상 참
+
+
+
+for문
+
+
+for (int변수; 조건; 반복명령) { }
+Ex> for (int i=0; i<10; i++) { }  조건이 False가 되어 탈출될때까지 { } 명령 실행
+
+변수
+
+public의 범위 : 해당 스크립트 파일 내. 즉 타 스크립트 파일에선 불능
+
+함수를 값으로 넣을 경우 : 변수명 = 함수명();  (  Assistant = GetAssistList(); )
+
+타 스크립트에서 쓸 경우 컴포넌트를 가져와야함.
+
+Ex >동일 오브젝트 내에 소속된 aaa.cs 스크립트의 Permission 함수를 bbb.cs에서 호출하고싶다면
+
+aaa.cs : public void Permission() { }
+bbb.cs : gameObject.GetComponent<aaa>().Permission;
+
+Ex >Box 오브젝트 내에 소속된 aaa.cs 스크립트의 Permission 함수를 Sphere 오브젝트에 소속된 bbb.cs에서 호출하고싶다면
+
+aaa.cs : public void Permission() { }
+bbb.cs : Box.gameObject.GetComponent<aaa>().Permission;
+
+
+
+
+
+하늘 : 마테리얼 생성 후 속성에서 Skybox - 6분할 선택 후 텍스쳐 입힘 이후 카메라 (쿼터뷰 등 고정시점은 메인카메라, FPS의 경우 캐릭터 카메라에 붙임)
+
+붙이는법 : 메뉴 컴퍼넌트 - 랜더링 - 스카이박스
+
+
+
+
+충돌감지할땐 반드시 물리 (RidgedBody)가 구현되어있어야 함. 그리고 스크립트를 통해 접촉을 판정해야함 (자동물리 안됨) + 박스 컬리더 IsTrigger도 체크.
+
+IsTrigger :  충돌시 정지하지 않고 뚫고 지나감. 단지 충돌했는지 여부만 감지해줌
+
+
+
+
+UI 사용할땐 스크립트 상단 헤더에
+
+using UnityEngine.UI
+
+추가해야함
